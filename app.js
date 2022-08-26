@@ -157,10 +157,10 @@ app.addContentTypeParser('*', (req, payload, done) => {
 * Register Handler
 */
 
-const { NotificationController } = require("./lib/controllers/NotificationController")
+/* const { NotificationController } = require("./lib/controllers/NotificationController")
 app.server.on("upgrade", async function (request, socket, head) {
-    await NotificationController.onUpgrade(request, socket, head)
-});
+    await NotificationController.onUpgrade(socket)
+}); */
 
 app.server.on("listening", function () {
     logger.logConsole(` `);

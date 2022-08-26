@@ -29,17 +29,7 @@ module.exports = async function notifierRoutes(app, _opt) {
     });
 
     app.get("/socket", { websocket: true }, async (connection, request) => {
-        connection.socket.on("connection", _message => {
-            connection.socket.send(`[NOTIFIER] Connection for ${request.socket.server.sessionIdContext}`);
-        })
-
-        connection.socket.on('message', _message => {
-            connection.socket.send(`[NOTIFIER] Message for ${request.socket.server.sessionIdContext}`);
-        });
-
-        connection.socket.on('upgrade', _message => {
-            connection.socket.send(`[NOTIFIER] Upgrade for ${request.socket.server.sessionIdContext}`);
-        });
+        await NotificationController.onUpgrade(connection, request);
     });
 
 };
