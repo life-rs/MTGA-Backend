@@ -186,7 +186,8 @@ module.exports = async function profileRoutes(app, _opts) {
                     await playerProfile.getProfileChangesResponse(actionResult, outputData);
                     break;
                 case "QuestAccept":
-                    actionResult = await GameController.clientGameProfileAcceptQuest(moveAction, reply, playerProfile);
+                    const socketId = request.socket.server.sessionIdContext;
+                    actionResult = await GameController.clientGameProfileAcceptQuest(moveAction, reply, playerProfile, socketId);
                     await playerProfile.getProfileChangesResponse(actionResult, outputData);
                     break;
                 case "RagFairBuyOffer":

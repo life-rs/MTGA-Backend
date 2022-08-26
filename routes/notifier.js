@@ -1,4 +1,5 @@
 const { logger, FastifyResponse } = require("../utilities");
+const { NotificationController } = require("../lib/controllers/NotificationController")
 
 
 module.exports = async function notifierRoutes(app, _opt) {
@@ -27,14 +28,17 @@ module.exports = async function notifierRoutes(app, _opt) {
         );
     });
 
-    app.get("/socket", { websocket: true }, async (connection, _request, _reply) => {
-        logger.logError("NOTIFIER getwebsocket GET HIT");
+    app.get("/socket", { websocket: true }, async (connection, request) => {
+        connection.socket.on("connection", _message => {
+            connection.socket.send(`[NOTIFIER] Connection for ${request.socket.server.sessionIdContext}`);
+        })
+
         connection.socket.on('message', _message => {
-            connection.socket.send('NOTIFIER message HIT');
+            connection.socket.send(`[NOTIFIER] Message for ${request.socket.server.sessionIdContext}`);
         });
 
         connection.socket.on('upgrade', _message => {
-            connection.socket.send('NOTIFIER upgrade HIT');
+            connection.socket.send(`[NOTIFIER] Upgrade for ${request.socket.server.sessionIdContext}`);
         });
     });
 

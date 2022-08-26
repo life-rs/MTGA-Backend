@@ -157,51 +157,9 @@ app.addContentTypeParser('*', (req, payload, done) => {
 * Register Handler
 */
 
-module.exports.webSockets = {};
-module.exports.webSocketHandler = null;
-
+const { NotificationController } = require("./lib/controllers/NotificationController")
 app.server.on("upgrade", async function (request, socket, head) {
-    await onUpgrade(request, socket, head)
-});
-
-// basically AKI's implementation of WebSocket, if optimization can be done, sweet
-//for now I think it's working? I need to now send notifications...
-const onUpgrade = async (request, socket, head) => {
-    const sessionID = socket.server.sessionIdContext;
-
-    webSockets[sessionID] = socket;
-
-    if (webSocketHandler) {
-        clearInterval(webSocketHandler);
-    }
-
-    webSocketHandler = setInterval(() => {
-        logger.logSuccess(`[WebSocket] Pinging Player: ${sessionID}`);
-        if (socket.readyState === "open") {
-            socket.on("message", _message => {
-                socket.send(
-                    stringify(
-                        {
-                            type: "ping",
-                            eventId: "ping"
-                        }
-                    )
-                );
-            })
-        } else {
-            logger.logDebug(`[WebSocket] Socket lost, deleting handle`);
-            clearInterval(webSocketHandler);
-
-            delete webSockets[sessionID];
-        }
-    }, 90000)
-}
-
-
-
-
-app.server.on("error", function (error) {
-    logger.logError(`[ERROR]` + error);
+    await NotificationController.onUpgrade(request, socket, head)
 });
 
 app.server.on("listening", function () {
